@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seeing the Forest for the Trees: Emergent Agreement from Individual Conversations</title>
+    <meta name="description" content="Project page for 'Seeing the Forest for the Trees: Emergent Agreement from Individual Conversations' (Simhi, Nikankin, Herzig, Szpektor, Belinkov, Cohen).">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@600;700&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #ffffff;
+            --bg-medium: #f8f9fa;
+            --bg-light: #e9ecef;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-orange: #f97316;
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a5568;
+            --text-muted:  #6b7280;
+
+            /* chart palette (validated: lightness band, CVD separation, contrast on white) */
+            --c1: #0891b2;   /* cyan-600   */
+            --c2: #9333ea;   /* purple-600 */
+            --c3: #db2777;   /* pink-600   */
+            --c4: #ea580c;   /* orange-600 */
+            --agree: #059669;
+            --agree-bg: #d1fae5;
+            --disagree: #b45309;
+            --disagree-bg: #fef3c7;
+            --grid: #e5e7eb;
+            --axis: #9ca3af;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Outfit', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            padding: 7rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: clamp(2.5rem, 7vw, 4.6rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .authors {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem 1.5rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 1s ease 0.6s both;
+        }
+
+        .author { color: var(--text-secondary); font-size: 1.1rem; }
+
+        .affiliations {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem 2rem;
+            margin: 1rem 0 2rem;
+            color: var(--text-muted);
+            animation: fadeIn 1s ease 0.8s both;
+        }
+
+        .links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            animation: fadeIn 1s ease 1s both;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: var(--bg-light);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        .btn svg { width: 18px; height: 18px; }
+
+        /* Container */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+        section { padding: 4.5rem 0; position: relative; }
+
+        .section-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-sub {
+            text-align: center;
+            color: var(--text-muted);
+            max-width: 760px;
+            margin: 0 auto 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Abstract */
+        .abstract-box {
+            background: var(--bg-medium);
+            border-left: 4px solid var(--accent-cyan);
+            padding: 2.5rem;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .abstract-box strong { color: #0e7490; }
+
+        /* Interactive Visualization */
+        .viz-container {
+            background: var(--bg-medium);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            max-width: 1100px;
+        }
+
+        .viz-header { text-align: center; margin-bottom: 1.5rem; }
+
+        .viz-header h3 { font-size: 2rem; margin-bottom: 0.75rem; color: var(--text-primary); }
+
+        .viz-description { color: var(--text-muted); font-size: 1rem; max-width: 720px; margin: 0 auto; }
+
+        .fig-svg {
+            width: 100%;
+            display: block;
+            border-radius: 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--grid);
+        }
+
+        #fig1 { aspect-ratio: 1000 / 460; }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1.75rem;
+        }
+
+        .control-btn {
+            padding: 0.75rem 1.3rem;
+            background: var(--bg-dark);
+            border: 2px solid var(--accent-purple);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .control-btn:hover { background: rgba(168, 85, 247, 0.12); transform: translateY(-2px); }
+
+        .control-btn.active {
+            background: var(--accent-purple);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+
+        .control-btn.play { border-color: var(--accent-cyan); }
+        .control-btn.play:hover { background: rgba(6, 182, 212, 0.12); }
+
+        .step-explanation {
+            margin-top: 1.75rem;
+            padding: 1.5rem;
+            background: var(--bg-dark);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-cyan);
+            color: var(--text-secondary);
+            font-size: 1.08rem;
+            line-height: 1.7;
+            min-height: 7.5rem;
+        }
+
+        .step-explanation .note {
+            display: block;
+            margin-top: 0.6rem;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        /* SVG helpers */
+        .fade { opacity: 0; transition: opacity 0.55s ease; }
+        .fade.show { opacity: 1; }
+        .draw { transition: stroke-dashoffset 1.2s ease-in-out; }
+        .cell { transition: fill 0.25s ease; }
+
+        .data-select {
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.75rem 1.25rem;
+            margin-top: 1.25rem; color: var(--text-secondary); font-size: 0.95rem;
+        }
+        .data-select label { display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; }
+        .data-select select {
+            font-family: inherit; font-size: 0.95rem; padding: 0.4rem 0.6rem; border-radius: 8px;
+            border: 1.5px solid var(--accent-purple); background: var(--bg-dark); color: var(--text-primary);
+        }
+        .narrow { max-width: 640px; margin: 0 auto; }
+
+        .takeaway { text-align: center; margin-bottom: 1rem; min-height: 3.4rem; }
+        .tk-sec {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-muted);
+            letter-spacing: 0.3px; margin-bottom: 0.45rem;
+        }
+        .tk-main {
+            display: inline-block; font-size: 1.3rem; font-weight: 700; line-height: 1.35;
+            padding: 0.55rem 1.3rem; border-radius: 12px; background: var(--bg-dark);
+            border: 2px solid var(--tk, var(--accent-purple)); color: var(--text-primary);
+            opacity: 0; transform: translateY(8px); transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .tk-main.on { opacity: 1; transform: none; }
+        @media (max-width: 768px) { .tk-main { font-size: 1.05rem; } .takeaway { min-height: 5.5rem; } }
+        .legend-row span { display: inline-flex; align-items: center; }
+
+        /* Findings */
+        .findings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.75rem;
+            margin-top: 2rem;
+        }
+
+        .finding-card {
+            background: var(--bg-medium);
+            padding: 2rem;
+            border-radius: 16px;
+            border-top: 4px solid var(--accent-cyan);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .finding-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
+        .finding-card:nth-child(2) { border-top-color: var(--accent-purple); }
+        .finding-card:nth-child(3) { border-top-color: var(--accent-pink); }
+        .finding-card:nth-child(4) { border-top-color: var(--accent-orange); }
+
+        .finding-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .finding-card h4 { font-size: 1.35rem; margin-bottom: 0.8rem; color: var(--text-primary); line-height: 1.3; }
+        .finding-card p { color: var(--text-secondary); line-height: 1.7; }
+
+        .finding-card .eq {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(6, 182, 212, 0.25);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.92rem;
+            color: var(--text-primary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-medium), var(--bg-light));
+            padding: 1.75rem 1.25rem;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover { transform: scale(1.04); border-color: var(--accent-cyan); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15); }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem; }
+
+        /* Setup cards */
+        .setup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.75rem;
+        }
+
+        .setup-card {
+            background: var(--bg-medium);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .setup-card h4 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+        .setup-card p, .setup-card li { color: var(--text-secondary); }
+        .setup-card ul { padding-left: 1.2rem; }
+        .setup-card li { margin-bottom: 0.4rem; }
+        .setup-card .dname { font-weight: 600; color: var(--text-primary); }
+
+        /* Result panels */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+            gap: 2rem;
+        }
+
+        .panel {
+            background: var(--bg-medium);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .panel h4 { font-size: 1.3rem; margin-bottom: 0.4rem; }
+        .panel .cap { color: var(--text-muted); font-size: 0.95rem; margin-top: 1rem; }
+
+        /* Tables */
+        .table-container { overflow-x: auto; margin-top: 1rem; }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--bg-dark);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        thead { background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); }
+
+        th { padding: 0.9rem 1rem; font-weight: 600; text-align: center; color: #fff; white-space: nowrap; }
+        th:first-child { text-align: left; }
+
+        td {
+            padding: 0.9rem 1rem;
+            border-top: 1px solid var(--bg-light);
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        td:first-child { text-align: left; font-weight: 600; color: var(--text-primary); }
+
+        tbody tr:hover { background: rgba(6, 182, 212, 0.05); }
+
+        .metric-value { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+        td.heat { font-family: 'JetBrains Mono', monospace; font-weight: 600; transition: background 0.6s ease, color 0.6s ease; }
+
+        .legend-row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 0.8rem; font-size: 0.9rem; color: var(--text-secondary); }
+        .legend-row .sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 6px; }
+
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            pointer-events: none;
+            background: #111827;
+            color: #f9fafb;
+            padding: 0.45rem 0.7rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            z-index: 2000;
+            max-width: 260px;
+        }
+        .tooltip.on { opacity: 1; }
+
+        /* Citation */
+        .citation-block {
+            background: var(--bg-medium);
+            border: 1px solid var(--accent-purple);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 0 auto;
+            max-width: 900px;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .citation-block pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 8px;
+            border: 1px solid var(--accent-purple);
+            background: var(--bg-dark);
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .copy-btn:hover { background: rgba(168, 85, 247, 0.1); }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            inset: 0;
+            background: rgba(10, 14, 23, 0.6);
+            backdrop-filter: blur(6px);
+            overflow-y: auto;
+        }
+
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+
+        .modal-content {
+            background: var(--bg-dark);
+            padding: 2.5rem;
+            border-radius: 20px;
+            max-width: 720px;
+            width: 90%;
+            margin: 2rem;
+            border: 2px solid var(--accent-purple);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal-close { float: right; font-size: 2rem; line-height: 1; color: var(--text-muted); cursor: pointer; transition: color 0.3s ease; }
+        .modal-close:hover { color: var(--accent-pink); }
+
+        #bibtex-text {
+            background: var(--bg-medium);
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            overflow-x: auto;
+            margin-top: 1rem;
+            border: 1px solid var(--accent-cyan);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-medium);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--bg-light);
+            margin-top: 4rem;
+        }
+
+        footer p { color: var(--text-muted); }
+        footer a { color: #0e7490; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* Scroll reveal */
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .reveal.in { opacity: 1; transform: none; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+            .reveal { opacity: 1; transform: none; }
+        }
+
+        /* Responsive */
+        @media (max-width: 860px) {
+            .explorer { grid-template-columns: 1fr; }
+            .results-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 4rem 1rem 2.5rem; }
+            .tagline { font-size: 1.2rem; }
+            section { padding: 3rem 0; }
+            .container { padding: 0 1rem; }
+            .section-title { font-size: 2.1rem; }
+            .viz-container { padding: 1.25rem; }
+            .panel { padding: 1.25rem; }
+            .abstract-box { padding: 1.5rem; font-size: 1.05rem; }
+            .control-btn { padding: 0.6rem 0.9rem; font-size: 0.85rem; }
+            .fig-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
+            #fig1 { min-width: 680px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Seeing the Forest for the Trees</h1>
+        <p class="tagline">Emergent Agreement from Individual Conversations</p>
+
+        <div class="authors">
+            <span class="author">Adi Simhi<sup>1</sup></span>
+            <span class="author">Yaniv Nikankin<sup>1</sup></span>
+            <span class="author">Jonathan Herzig<sup>2</sup></span>
+            <span class="author">Idan Szpektor<sup>2</sup></span>
+            <span class="author">Yonatan Belinkov<sup>1</sup></span>
+            <span class="author">Shay B. Cohen<sup>3</sup></span>
+        </div>
+
+        <div class="affiliations">
+            <span class="affiliation"><sup>1</sup>Technion – Israel Institute of Technology</span>
+            <span class="affiliation"><sup>2</sup>Google Research</span>
+            <span class="affiliation"><sup>3</sup>University of Edinburgh</span>
+        </div>
+
+        <!--
+          The three button icons below (file-text, code, quote) are from Feather Icons and Lucide.
+
+          Feather Icons: The MIT License (MIT). Copyright (c) 2013-present Cole Bemis.
+          Lucide: ISC License. Copyright (c) Lucide Icons and Contributors.
+
+          Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+          associated documentation files (the "Software"), to deal in the Software without restriction,
+          including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+          and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+          subject to the following conditions: The above copyright notice and this permission notice shall be
+          included in all copies or substantial portions of the Software.
+          THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+
+          Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee
+          is hereby granted, provided that the above copyright notice and this permission notice appear in all
+          copies. THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+          SOFTWARE.
+
+          Fonts (Outfit, Crimson Pro, JetBrains Mono) are served by Google Fonts under the SIL Open Font License 1.1.
+        -->
+        <div class="links">
+            <a href="https://arxiv.org/abs/2610.29328" class="btn" id="paper-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                Paper
+            </a>
+            <a href="https://github.com/technion-cs-nlp/SeeingTheForestForTheTrees" class="btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg>
+                Code
+            </a>
+            <a href="#" class="btn" onclick="openModal(); return false;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+                BibTeX
+            </a>
+        </div>
+    </header>
+
+    <!-- Abstract -->
+    <section style="padding-top: 1rem;">
+        <div class="container">
+            <div class="abstract-box reveal">
+                <p>
+                    As LLM agents interact in the wild and shape each other's decisions, understanding how they converge toward agreement becomes important.
+                    We study this in <strong>multi-turn conversations</strong> where two LLMs discuss subjective matters, can agree or disagree, and may change their stances.
+                    Using a linear classifier on individual conversation activations, we identify an <strong>internal representation of agreement</strong>.
+                    We find that it varies substantially across turns and conversations and does not reliably track external agreement at the individual conversation level.
+                    We therefore move beyond the representation of agreement in individual conversations, by <strong>aggregating the agreement representation across conversations</strong>.
+                    Externally, this aggregate view reveals a simple structure: when pooled across conversations, agreement can be predicted well with a <strong>Markov process</strong>, with agreement at each turn being a direct function of agreement at the previous turn.
+                    Similarly, when internal agreement is aggregated, it couples with the external Markov agreement through a <strong>power-law mapping</strong>, exposing Markovian dynamics in internal representations.
+                    Additionally, we find that after a change of stance, models <strong>express agreement externally before</strong> their internal representations reflect the same shift.
+                    These results reveal a joint structure between internal and external agreement that emerges only when internal features are aggregated across conversations.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Animated Figure 1 -->
+    <section>
+        <div class="container">
+            <div class="viz-container reveal">
+                <div class="viz-header">
+                    <h3>From Trees to Forest: an Animated Overview</h3>
+                </div>
+
+                <div class="takeaway" id="takeaway">
+                    <div class="tk-main" id="tk-main"></div>
+                </div>
+                <div class="fig-scroll"><svg id="fig1" class="fig-svg" viewBox="0 0 1000 460" role="img" aria-label="Animated overview figure"></svg></div>
+
+                <div class="controls" id="fig1-controls">
+                    <button class="control-btn play" id="play-all">▶ Play all</button>
+                    <button class="control-btn" data-step="0">(a) Conversation</button>
+                    <button class="control-btn" data-step="1">(b) Individual internals</button>
+                    <button class="control-btn" data-step="2">(c) Aggregated behavior</button>
+                    <button class="control-btn" data-step="3">(d) Aggregated internals</button>
+                </div>
+
+                <div class="data-select" id="fig1-select">
+                    <span>Data for panels (b)–(d):</span>
+                    <label>Model
+                        <select id="sel-model">
+                            <option>Ministral</option><option>Qwen</option><option selected>Gemma</option>
+                        </select>
+                    </label>
+                    <label>Dataset
+                        <select id="sel-ds">
+                            <option selected>Beh-Disp</option><option>Global</option><option>Manager</option><option>Self-Coord.</option><option>Wealthseeking</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Findings -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">Key Findings</h2>
+            <div class="findings-grid">
+                <div class="finding-card reveal">
+                    <h4>Individual conversations are noisy</h4>
+                    <p>A linear (ridge-LDA) agreement direction, read per conversation, swings back and forth.</p>
+                </div>
+                <div class="finding-card reveal">
+                    <h4>Aggregated behavior is Markovian</h4>
+                    <p>Pooled across conversations, agreement at each turn is a function of agreement at the previous turn. A first-order Markov model reaches 7.06% MAE, close to a second-order model (6.26%) and well below a no-history baseline (12.22%). Similar behavioral trends hold for the closed-source Gemini-2.5-Pro.</p>
+                </div>
+                <div class="finding-card reveal">
+                    <h4>Aggregated internals follow a power law</h4>
+                    <p>The aggregated internal agreement z̄(t) couples with behavioral Markov agreement p(t) through a power law.</p>
+                </div>
+                <div class="finding-card reveal">
+                    <h4>Internals lag behind behavior</h4>
+                    <p>After an opinion change to agreement, models state agreement first; internal representations remain distinguishable from reference agreement and converge toward it only over the following turns.</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card reveal"><div class="stat-number">5</div><div class="stat-label">scenario datasets</div></div>
+                <div class="stat-card reveal"><div class="stat-number">3</div><div class="stat-label">open-weight models<br>(+ Gemini-2.5-Pro, behavioral)</div></div>
+                <div class="stat-card reveal"><div class="stat-number">10</div><div class="stat-label">rounds per conversation</div></div>
+                <div class="stat-card reveal"><div class="stat-number">300</div><div class="stat-label">scenarios per model–dataset<br>(capped at dataset size)</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">Results</h2>
+
+            <div class="panel reveal">
+                <h4>Predicting behavioral agreement</h4>
+                <p style="color:var(--text-muted)">Mean absolute error against the empirical agreement curve, averaged across models and datasets (lower is better).</p>
+                <div class="narrow"><svg id="mae" class="fig-svg" viewBox="0 0 520 200" role="img" aria-label="MAE bar chart" style="margin-top:1rem"></svg></div>
+                <p class="cap">The first-order Markov model performs similarly to the second-order model, while the unigram baseline has nearly twice the error. The paper uses the first-order model for simplicity.</p>
+            </div>
+
+            <div class="panel reveal" style="margin-top:2rem">
+                <h4>Aggregated internal agreement follows behavioral Markov agreement via a power law</h4>
+                <div class="fig-scroll"><svg id="powerlaw" class="fig-svg" viewBox="0 0 1100 400" role="img" aria-label="Power-law relation between behavioral Markov agreement and aggregated internal agreement" style="margin-top:1rem; min-width:720px"></svg></div>
+                <div class="legend-row" id="pl-legend"></div>
+            </div>
+
+            <div class="panel reveal" style="margin-top:2rem">
+                <h4>Internal agreement lags behavior</h4>
+                <p style="color:var(--text-muted)">Δ<sub>ℓ</sub> = 2|AUROC(Z<sub>ℓ</sub>, Z<sub>ref</sub>) − 0.5|, ℓ turns relative to an opinion change to agreement (ℓ = −1 is the turn before). 0 means indistinguishable from reference agreement.</p>
+                <div class="narrow"><svg id="lag" class="fig-svg" viewBox="0 0 520 230" role="img" aria-label="Lag heatmap" style="margin-top:1rem"></svg></div>
+                <p class="cap">All observed values exceed the null baseline (Δ<sub>null</sub> = 0.04–0.09) and generally decrease as ℓ grows: internal representations remain distinguishable from reference agreement after a behavioral opinion change and converge toward it over subsequent turns.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Citation -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">Citation</h2>
+            <div class="citation-block reveal">
+                <button class="copy-btn" onclick="copyBib(this)">Copy</button>
+                <pre id="bib-main"></pre>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Paper: <a href="https://arxiv.org/abs/2610.29328">arxiv.org/abs/2610.29328</a></p>
+        <p style="margin-top:0.5rem">Code: <a href="https://github.com/technion-cs-nlp/SeeingTheForestForTheTrees">github.com/technion-cs-nlp/SeeingTheForestForTheTrees</a></p>
+        <p style="margin-top:0.5rem">Contact: <a href="mailto:adi.simhi@campus.technion.ac.il">adi.simhi@campus.technion.ac.il</a></p>
+    </footer>
+
+    <!-- BibTeX Modal -->
+    <div id="bibtex-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h3 style="margin-bottom: 1rem; color: var(--text-primary);">Cite our work</h3>
+            <pre id="bibtex-text"></pre>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tip"></div>
+
+    <script>
+    /* Data read from the vector graphics of the paper (Figures 2, 3, 4). */
+    const FIG2={"Ministral":{"Beh-Disp":[[-0.429,0.339,0.293,0.734,0.842,1.171,0.681,0.961,0.912],[0.637,0.82,0.693,-0.256,0.066,-0.089,-0.353,1.186,0.085],[0.959,-0.614,-0.269,0.096,-0.147,0.459,0.312,0.768,0.559],[-0.398,0.526,0.091,0.475,0.255,0.549,0.031,0.674,0.374],[-0.118,0.121,-0.004,0.341,0.315,0.227,0.249,0.5,0.269],[0.334,0.108,0.891,0.364,0.728,0.834,0.564,0.903,0.732],[0.858,0.663,1.138,0.794,1.444,0.229,-0.177,0.117,0.159],[-0.074,0.879,-0.647,1.021,0.687,0.261,0.821,0.689,1.067],[-0.423,0.281,0.761,1.135,1.031,1.052,0.937,0.783,0.883],[1.224,0.629,0.314,0.657,0.902,0.896,0.649,0.723,0.976]],"Global":[[-0.138,0.077,-0.314,0.096,-0.302,-0.389,-0.366,-0.131,-0.399],[-1.024,-0.775,0.363,-0.17,-0.352,-0.048,0.065,-0.071,-0.173],[-0.836,-0.264,-0.754,-0.007,-0.642,-0.518,-0.871,-0.926,-0.689],[0.142,0.986,0.849,-0.573,-0.78,0.912,0.98,0.784,1.006],[-0.37,0.013,-1.197,0.116,0.018,0.269,0.122,-0.143,-0.08],[-0.32,-0.123,0.064,0.221,0.297,0.317,0.253,0.527,0.159],[-0.76,-0.665,-0.445,0.129,0.227,0.308,0.442,0.384,0.16],[-0.646,0.055,0.437,0.465,0.334,0.562,0.833,0.413,0.681],[-0.814,0.23,0.686,0.717,0.879,0.627,0.683,0.583,0.751],[-0.728,-0.224,-1.292,-0.978,-0.963,-1.346,-0.728,-1.266,-0.867]],"Manager":[[0.462,0.343,1.149,1.137,0.687,1.009,0.8,0.996,0.673],[0.204,0.502,0.446,0.378,0.374,0.491,0.641,0.389,0.811],[0.343,-0.036,0.824,0.949,0.234,0.806,0.295,0.77,0.695],[0.486,-0.377,1.301,-0.083,0.599,-0.774,0.776,-0.367,0.683],[-0.45,0.536,0.747,0.723,0.891,0.866,1.127,1.072,0.68],[0.133,0.669,0.591,0.41,0.63,0.097,0.016,-0.114,0.413],[-0.067,0.097,-0.182,-0.239,0.53,0.738,0.776,0.814,1.047],[0.332,0.387,0.4,-0.064,0.522,0.133,0.498,0.255,0.387],[0.936,0.792,0.824,0.628,0.546,0.763,0.78,0.883,0.754],[-0.591,0.727,0.853,0.639,1.24,1.297,1.307,1.263,1.211]],"Self-Coord.":[[0.011,-0.069,0.28,0.204,0.294,0.093,0.848,0.857,0.209],[0.274,-0.489,0.306,-0.31,0.373,0.359,0.475,-0.387,0.071],[-0.957,0.264,-0.299,-0.391,-0.576,-0.28,-0.385,0.285,-0.823],[-0.28,0.873,0.351,0.587,0.688,0.688,0.913,0.555,0.582],[0.292,-0.572,-1.206,-0.685,-1.002,-0.194,-0.45,-0.487,0.353],[-0.802,-0.602,-0.756,-0.372,0.551,0.601,0.721,0.801,0.49],[0.923,1.201,0.945,0.882,0.845,-0.726,1.025,1.248,1.003],[-0.114,0.239,0.065,0.385,0.437,0.452,0.547,0.515,0.414],[-0.249,-0.456,-0.584,-0.688,-0.189,-0.041,-0.201,-0.971,-0.319],[-1.275,-0.013,0.032,0.216,0.223,-0.065,0.204,0.491,0.476]],"Wealthseeking":[[-1.114,-0.454,-1.43,0.37,0.305,0.309,0.108,-0.08,0.005],[-0.589,-0.486,-1.207,-0.482,-0.413,-0.12,-1.288,-0.465,-1.155],[-1.653,-0.223,-0.428,-0.555,-0.659,-0.344,-0.442,-0.443,0.174],[-1.371,-0.852,-0.138,0.986,0.382,0.639,0.485,0.128,0.19],[-0.103,-1.228,-0.816,-1.384,-0.765,-1.106,-1.076,-1.137,-1.006],[0.3,-1.54,-0.919,-1.022,-0.62,-0.075,-0.554,-0.518,-0.729],[-0.681,-1.015,-0.764,-1.061,-0.153,-1.368,-0.592,-0.74,-0.726],[-1.137,-1.741,-0.707,-0.76,-0.943,-0.099,-0.357,-0.169,-0.027],[-0.489,-1.052,-0.726,-0.119,-0.108,0.151,-0.041,-0.254,-0.198],[-0.938,-0.556,-0.494,-0.178,-0.616,-0.139,-0.895,-0.217,-0.517]]},"Qwen":{"Beh-Disp":[[0.063,0.269,0.242,0.16,0.127,0.219,0.159,0.255,0.263],[0.169,0.244,-0.046,0.147,0.196,0.087,0.134,0.14,0.182],[0.055,0.093,0.208,0.183,0.216,0.199,0.233,0.241,0.205],[-0.042,-0.212,-0.092,-0.093,-0.157,-0.031,-0.021,0.098,0.062],[-0.268,-0.17,-0.099,0.085,-0.013,-0.02,0.04,0.13,0.122],[0.034,-0.036,-0.018,0.057,0.038,0.187,0.327,0.317,0.308],[-0.146,-0.074,0.237,0.29,0.337,0.251,0.338,0.266,0.24],[-0.001,0.247,0.133,0.171,0.309,0.324,0.354,0.25,0.301],[0.336,0.294,0.458,0.464,0.446,0.402,0.36,0.319,0.368],[-0.046,0.259,0.201,0.322,0.289,0.294,0.312,0.248,0.197]],"Global":[[-0.294,-0.284,-0.351,-0.453,-0.367,-0.358,-0.369,-0.371,-0.381],[-0.313,0.08,-0.068,-0.021,-0.056,-0.028,0.093,0.023,-0.002],[-0.346,-0.241,-0.209,-0.018,0.085,0.101,0.2,0.208,0.24],[-0.383,-0.322,-0.354,-0.36,-0.194,-0.226,-0.16,-0.139,-0.098],[-0.255,-0.337,-0.179,-0.244,-0.25,-0.25,-0.316,-0.286,-0.319],[0.11,-0.053,-0.102,-0.245,-0.013,-0.398,-0.032,-0.365,-0.353],[-0.221,-0.406,-0.431,-0.514,-0.474,-0.367,-0.316,-0.41,-0.354],[-0.344,-0.243,-0.153,-0.173,-0.157,-0.124,-0.142,-0.237,-0.326],[-0.353,-0.148,-0.314,-0.242,-0.129,-0.157,-0.19,-0.21,-0.226],[-0.31,-0.285,-0.149,-0.038,-0.007,-0.007,0.039,-0.011,0.018]],"Manager":[[-0.316,0.104,0.132,0.225,0.221,0.207,0.188,0.203,0.229],[-0.254,0.106,0.255,0.329,0.283,0.294,0.356,0.35,0.338],[-0.252,0.035,0.009,0.11,0.149,0.205,0.195,0.182,0.194],[-0.444,-0.336,0.132,0.29,0.236,0.31,0.313,0.369,0.414],[-0.178,-0.253,-0.034,0.128,0.181,0.095,0.099,0.136,0.137],[-0.308,0.078,-0.058,-0.075,-0.014,0.079,-0.133,-0.03,0.029],[0.191,0.166,0.18,0.149,0.227,0.111,0.304,0.158,0.241],[-0.275,-0.002,0.117,0.236,0.176,0.144,0.154,0.158,0.133],[0.129,-0.178,0.199,0.068,0.283,0.227,0.113,0.097,0.143],[-0.237,-0.174,-0.418,-0.252,-0.256,-0.166,-0.158,-0.004,0.001]],"Self-Coord.":[[-0.257,-0.221,-0.069,-0.348,-0.285,-0.213,-0.066,-0.152,-0.144],[-0.041,-0.173,-0.272,-0.416,-0.139,-0.122,-0.134,-0.025,-0.165],[-0.073,-0.017,-0.08,-0.123,-0.217,-0.09,-0.088,0.046,0.055],[-0.059,-0.182,-0.321,-0.177,0.087,-0.004,-0.054,-0.059,0.022],[-0.017,-0.128,-0.172,-0.126,-0.123,0.054,0.025,-0.235,0.073],[-0.346,-0.269,-0.337,-0.278,-0.364,-0.328,-0.335,-0.302,-0.257],[-0.326,-0.313,0.07,-0.132,0.005,-0.16,-0.022,0.021,0.099],[-0.188,-0.273,-0.185,-0.227,-0.22,-0.237,-0.29,-0.329,-0.302],[-0.162,-0.194,0.026,-0.046,0.037,-0.002,-0.046,-0.07,-0.086],[-0.386,-0.384,0.102,0.132,0.071,-0.221,-0.266,-0.224,-0.194]],"Wealthseeking":[[-0.28,-0.227,-0.152,-0.138,-0.108,-0.113,-0.13,-0.121,-0.121],[-0.389,-0.274,-0.298,-0.318,-0.433,-0.34,-0.237,-0.223,-0.244],[-0.195,-0.207,-0.245,-0.331,-0.19,-0.316,-0.246,-0.231,-0.227],[-0.247,-0.025,0.018,0.176,0.161,0.229,0.221,0.199,0.168],[-0.378,-0.277,-0.282,-0.314,-0.338,-0.316,-0.327,-0.254,-0.209],[-0.324,-0.204,-0.215,-0.28,-0.209,-0.284,-0.245,-0.249,-0.167],[-0.008,-0.298,-0.227,-0.065,-0.089,-0.02,-0.076,0.011,0.047],[-0.279,-0.246,-0.171,0.048,-0.025,0.124,0.16,0.184,0.123],[-0.331,-0.349,-0.15,-0.278,-0.141,-0.078,-0.052,-0.063,-0.09],[-0.107,-0.171,0.011,-0.022,0.032,0.255,0.044,0.059,0.232]]},"Gemma":{"Beh-Disp":[[-0.128,-0.085,-0.076,-0.163,-0.233,-0.243,-0.268,-0.255,-0.241],[-0.167,-0.189,-0.214,-0.204,-0.038,-0.03,0.129,0.142,0.11],[0.013,0.283,0.158,0.196,0.235,0.259,0.269,0.295,0.299],[0.111,-0.215,-0.201,-0.191,-0.217,-0.203,-0.198,-0.146,-0.102],[-0.081,-0.055,-0.131,-0.171,0.021,0.111,0.182,0.178,0.172],[-0.024,0.117,0.126,0.169,0.175,0.179,0.192,0.177,0.233],[-0.088,-0.161,-0.202,-0.136,-0.178,-0.191,-0.199,-0.163,-0.241],[0.114,0.043,-0.063,-0.08,-0.101,-0.083,-0.107,-0.097,-0.115],[-0.017,-0.056,0.087,0.069,0.182,0.189,0.226,0.245,0.268],[0.095,0.096,0.049,0.237,0.209,0.293,0.255,0.247,0.248]],"Global":[[-0.245,-0.264,-0.296,-0.339,-0.278,-0.374,-0.348,-0.335,-0.357],[-0.341,-0.24,-0.313,-0.225,-0.095,-0.045,0.184,0.125,0.129],[-0.261,-0.271,-0.251,-0.255,-0.278,-0.287,-0.222,-0.282,-0.305],[-0.195,-0.227,-0.199,-0.196,-0.239,-0.188,-0.353,-0.191,-0.221],[-0.17,-0.284,-0.291,-0.323,-0.314,-0.295,-0.242,-0.285,-0.313],[-0.315,-0.31,-0.352,-0.282,-0.292,-0.33,-0.368,-0.275,-0.401],[-0.244,-0.244,-0.224,-0.19,-0.215,-0.247,-0.249,-0.299,-0.248],[-0.323,-0.259,-0.329,-0.293,-0.262,-0.322,-0.291,-0.291,-0.244],[-0.251,-0.287,-0.302,-0.305,-0.307,-0.272,-0.312,-0.193,-0.316],[-0.212,-0.358,-0.348,-0.259,-0.336,-0.29,-0.262,-0.253,-0.13]],"Manager":[[-0.302,-0.375,-0.249,-0.058,0.131,0.156,0.192,0.164,0.124],[-0.17,-0.22,-0.222,-0.26,-0.286,-0.238,-0.217,-0.246,-0.222],[-0.161,-0.103,-0.155,-0.084,-0.211,-0.189,-0.262,-0.217,-0.148],[-0.308,-0.289,-0.257,-0.267,-0.309,-0.287,-0.281,-0.27,-0.356],[-0.287,-0.243,-0.234,-0.267,-0.308,-0.324,-0.299,-0.281,-0.3],[-0.245,-0.287,-0.328,-0.334,-0.305,-0.227,-0.227,-0.217,-0.19],[-0.265,-0.266,-0.273,-0.278,-0.288,-0.045,0.016,-0.006,0.095],[-0.272,-0.245,-0.167,-0.295,-0.202,-0.203,-0.22,-0.269,-0.268],[-0.257,-0.197,-0.295,-0.279,-0.25,-0.242,-0.286,0.077,0.124],[-0.238,-0.253,-0.261,-0.263,-0.195,-0.262,-0.229,-0.211,-0.242]],"Self-Coord.":[[-0.003,-0.035,-0.086,-0.137,-0.144,-0.111,-0.14,-0.075,-0.12],[-0.294,-0.288,-0.278,-0.302,-0.253,-0.308,-0.279,-0.287,-0.27],[-0.285,-0.211,-0.214,-0.244,-0.219,-0.256,-0.168,-0.236,-0.204],[-0.045,-0.037,-0.079,-0.013,-0.042,0.015,0.046,-0.033,-0.04],[-0.046,-0.112,-0.173,-0.149,-0.153,-0.161,-0.141,-0.147,-0.046],[-0.236,-0.198,-0.209,-0.258,-0.268,-0.27,-0.256,-0.296,-0.298],[-0.21,-0.27,-0.246,-0.26,-0.261,-0.223,-0.254,-0.27,-0.266],[-0.266,-0.288,-0.26,-0.226,-0.262,-0.282,-0.291,-0.326,-0.294],[-0.199,-0.195,-0.202,-0.244,-0.179,-0.157,-0.07,-0.19,0.03],[-0.129,-0.271,-0.208,-0.26,-0.224,-0.232,-0.248,-0.193,-0.22]],"Wealthseeking":[[-0.242,-0.317,-0.282,-0.333,-0.306,-0.286,-0.356,-0.299,-0.284],[-0.302,-0.327,-0.334,-0.378,-0.338,-0.141,-0.058,0.014,0.11],[-0.217,-0.211,-0.127,-0.155,-0.058,-0.114,-0.165,-0.257,-0.15],[-0.318,-0.332,-0.233,-0.204,-0.249,-0.329,-0.263,-0.284,-0.173],[-0.242,-0.328,-0.326,-0.361,-0.25,-0.336,-0.343,-0.355,-0.38],[-0.333,-0.29,-0.336,-0.316,-0.315,-0.338,-0.322,-0.293,-0.29],[-0.128,-0.172,-0.161,-0.152,-0.188,-0.204,-0.2,-0.189,-0.147],[-0.276,-0.171,-0.142,-0.107,-0.124,-0.128,-0.184,-0.186,-0.173],[-0.198,-0.242,-0.298,-0.282,-0.291,-0.333,-0.301,-0.341,-0.348],[-0.254,-0.218,-0.216,-0.072,-0.035,0.027,0.098,0.157,0.143]]}};
+    const FIG3={"Ministral":{"Beh-Disp":{"emp":[-0.0,53.8,38.5,58.3,58.3,83.3,100.0,83.3,100.0,91.7],"m1":[-0.0,36.2,55.3,65.4,70.8,73.6,75.1,75.9,76.3,76.5],"m2":[53.0,66.8,70.1,74.1,76.5,78.5,80.0,81.1],"uni":60.0},"Global":{"emp":[-0.0,61.3,80.6,80.6,89.7,82.8,72.4,75.9,82.8,82.1],"m1":[-0.0,43.5,63.3,72.4,76.5,78.4,79.3,79.7,79.9,80.0],"m2":[58.9,69.8,73.1,77.0,79.4,81.1,82.2,83.1],"uni":64.6},"Manager":{"emp":[-0.0,69.0,65.5,75.0,75.0,85.2,100.0,88.9,92.3,100.0],"m1":[-0.0,54.1,72.3,78.4,80.5,81.2,81.4,81.5,81.5,81.5],"m2":[67.1,75.3,77.3,79.3,80.1,80.6,80.9,81.0],"uni":68.6},"Self-Coord.":{"emp":[-0.0,68.1,72.3,61.4,72.1,69.0,82.5,85.0,67.5,71.8],"m1":[-0.0,49.2,64.1,68.6,70.0,70.4,70.5,70.6,70.6,70.6],"m2":[59.6,70.3,71.2,73.1,73.8,74.3,74.4,74.6],"uni":59.2},"Wealthseeking":{"emp":[-0.0,63.3,51.0,73.5,68.7,78.7,72.7,69.8,75.6,82.9],"m1":[-0.0,53.0,67.1,70.9,71.9,72.2,72.2,72.3,72.3,72.3],"m2":[57.3,68.6,70.5,73.1,74.3,75.1,75.6,75.8],"uni":62.0}},"Qwen":{"Beh-Disp":{"emp":[-0.0,31.8,45.4,68.2,72.7,59.1,81.8,77.3,72.7,81.8],"m1":[-0.0,46.4,67.0,76.2,80.2,82.0,82.8,83.2,83.3,83.4],"m2":[48.3,61.9,70.5,76.5,80.5,83.2,85.1,86.3],"uni":68.2},"Global":{"emp":[-0.0,10.9,13.0,23.9,30.4,32.6,30.4,34.8,41.3,43.5],"m1":[-0.0,13.6,22.4,28.1,31.8,34.3,35.8,36.9,37.5,38.0],"m2":[16.7,23.0,27.8,32.0,35.4,38.3,40.7,42.7],"uni":27.4},"Manager":{"emp":[-0.0,20.0,43.3,66.7,63.3,76.7,76.7,76.7,76.7,86.7],"m1":[-0.0,41.1,61.1,70.8,75.5,77.8,78.9,79.5,79.7,79.9],"m2":[45.0,58.6,69.0,75.6,80.1,83.1,85.1,86.4],"uni":64.0},"Self-Coord.":{"emp":[-0.0,24.2,18.2,30.3,36.4,33.3,45.4,45.4,42.4,48.5],"m1":[-0.0,24.0,36.2,42.3,45.4,46.9,47.7,48.1,48.3,48.4],"m2":[30.9,39.6,44.8,49.3,52.5,55.0,57.0,58.4],"uni":37.8},"Wealthseeking":{"emp":[-0.0,26.3,38.6,47.4,59.6,61.4,71.9,66.7,71.9,73.7],"m1":[-0.0,21.4,36.0,45.9,52.6,57.2,60.3,62.4,63.8,64.8],"m2":[36.5,46.7,54.1,59.9,64.4,67.8,70.5,72.6],"uni":45.4}},"Gemma":{"Beh-Disp":{"emp":[-0.0,30.0,43.3,50.0,66.7,73.3,73.3,76.7,83.3,80.0],"m1":[-0.0,22.5,39.6,52.5,62.3,69.7,75.4,79.7,82.9,85.4],"m2":[42.2,53.0,61.6,68.5,74.1,78.6,82.2,85.1],"uni":58.6},"Global":{"emp":[-0.0,1.9,1.9,7.5,7.5,9.4,11.3,9.4,11.3,9.4],"m1":[-0.0,2.8,5.5,8.1,10.5,12.8,14.9,16.9,18.8,20.7],"m2":[4.6,7.2,9.7,12.2,14.6,16.9,19.2,21.4],"uni":10.9},"Manager":{"emp":[-0.0,3.6,11.0,21.9,23.2,33.3,38.3,39.5,39.5,44.4],"m1":[-0.0,5.6,10.8,15.6,20.0,24.2,28.0,31.5,34.8,37.8],"m2":[8.9,13.7,18.3,22.6,26.7,30.5,34.1,37.5],"uni":21.4},"Self-Coord.":{"emp":[-0.0,-0.0,-0.0,1.6,3.2,9.5,15.9,25.4,28.6,31.7],"m1":[-0.0,5.2,9.8,13.9,17.4,20.5,23.3,25.7,27.8,29.6],"m2":[5.6,10.4,14.8,18.9,22.6,26.0,29.2,32.0],"uni":11.6},"Wealthseeking":{"emp":[-0.0,-0.0,1.4,1.4,2.8,2.8,5.7,7.1,8.6,10.0],"m1":[-0.0,2.5,4.9,7.1,9.2,11.2,13.0,14.8,16.4,18.0],"m2":[2.5,4.8,7.2,9.5,11.8,14.0,16.2,18.3],"uni":7.3}}};
+    const FIG4={"Ministral":{"Beh-Disp":[[0.357,0.325,0.217,0.433],[0.549,0.509,0.41,0.608],[0.652,0.493,0.382,0.604],[0.707,0.676,0.579,0.773],[0.736,0.68,0.577,0.784],[0.752,0.59,0.506,0.674],[0.761,0.479,0.388,0.571],[0.765,0.643,0.571,0.714],[0.768,0.668,0.594,0.743]],"Global":[[0.488,-0.577,-0.634,-0.519],[0.672,-0.266,-0.32,-0.212],[0.741,-0.189,-0.256,-0.122],[0.767,0.021,-0.034,0.077],[0.776,0.045,-0.02,0.11],[0.78,0.065,0.0,0.13],[0.781,0.145,0.071,0.218],[0.782,0.159,0.086,0.232],[0.782,0.093,0.016,0.171]],"Manager":[[0.554,0.147,0.078,0.215],[0.74,0.345,0.291,0.399],[0.801,0.461,0.399,0.522],[0.822,0.501,0.439,0.562],[0.829,0.509,0.449,0.57],[0.832,0.579,0.516,0.642],[0.832,0.654,0.593,0.716],[0.833,0.648,0.59,0.706],[0.833,0.681,0.625,0.738]],"Self-Coord.":[[0.543,-0.475,-0.525,-0.425],[0.682,-0.401,-0.456,-0.346],[0.718,-0.257,-0.312,-0.202],[0.727,-0.222,-0.282,-0.162],[0.729,-0.179,-0.245,-0.113],[0.73,-0.04,-0.103,0.024],[0.73,-0.001,-0.066,0.064],[0.73,0.052,-0.009,0.114],[0.73,0.07,0.007,0.134]],"Wealthseeking":[[0.544,-0.496,-0.547,-0.446],[0.688,-0.619,-0.67,-0.568],[0.726,-0.528,-0.577,-0.479],[0.736,-0.455,-0.508,-0.402],[0.739,-0.319,-0.365,-0.273],[0.739,-0.237,-0.287,-0.188],[0.739,-0.251,-0.305,-0.197],[0.74,-0.218,-0.272,-0.165],[0.74,-0.182,-0.234,-0.13]]},"Qwen":{"Beh-Disp":[[0.463,0.047,0.024,0.07],[0.659,0.072,0.047,0.097],[0.741,0.094,0.068,0.12],[0.775,0.126,0.099,0.153],[0.79,0.133,0.106,0.16],[0.796,0.145,0.125,0.165],[0.799,0.174,0.154,0.194],[0.8,0.178,0.16,0.196],[0.8,0.176,0.159,0.195]],"Global":[[0.123,-0.217,-0.232,-0.202],[0.207,-0.219,-0.235,-0.203],[0.264,-0.222,-0.238,-0.206],[0.302,-0.219,-0.235,-0.203],[0.328,-0.2,-0.217,-0.182],[0.345,-0.184,-0.202,-0.166],[0.357,-0.172,-0.191,-0.154],[0.365,-0.176,-0.195,-0.158],[0.37,-0.175,-0.194,-0.157]],"Manager":[[0.39,-0.173,-0.193,-0.153],[0.584,-0.15,-0.173,-0.127],[0.68,-0.098,-0.12,-0.076],[0.728,-0.037,-0.063,-0.011],[0.751,-0.013,-0.037,0.012],[0.763,0.027,0.003,0.051],[0.769,0.053,0.029,0.077],[0.772,0.06,0.036,0.083],[0.773,0.08,0.058,0.102]],"Self-Coord.":[[0.21,-0.146,-0.166,-0.125],[0.318,-0.159,-0.181,-0.137],[0.375,-0.142,-0.164,-0.121],[0.404,-0.142,-0.165,-0.119],[0.419,-0.108,-0.131,-0.086],[0.427,-0.112,-0.134,-0.09],[0.431,-0.099,-0.12,-0.077],[0.433,-0.098,-0.12,-0.075],[0.434,-0.098,-0.122,-0.075]],"Wealthseeking":[[0.235,-0.21,-0.223,-0.197],[0.388,-0.207,-0.219,-0.196],[0.488,-0.203,-0.214,-0.191],[0.553,-0.172,-0.186,-0.158],[0.596,-0.151,-0.165,-0.137],[0.624,-0.126,-0.141,-0.111],[0.642,-0.103,-0.118,-0.087],[0.654,-0.096,-0.111,-0.08],[0.661,-0.074,-0.09,-0.059]]},"Gemma":{"Beh-Disp":[[0.266,-0.094,-0.109,-0.08],[0.454,-0.06,-0.079,-0.042],[0.587,-0.053,-0.075,-0.032],[0.681,-0.011,-0.034,0.013],[0.747,0.037,0.013,0.06],[0.794,0.063,0.04,0.086],[0.827,0.073,0.047,0.098],[0.85,0.09,0.067,0.113],[0.867,0.099,0.075,0.123]],"Global":[[0.027,-0.235,-0.245,-0.226],[0.052,-0.241,-0.252,-0.23],[0.074,-0.232,-0.244,-0.219],[0.094,-0.22,-0.235,-0.204],[0.112,-0.207,-0.225,-0.188],[0.128,-0.202,-0.222,-0.183],[0.143,-0.203,-0.223,-0.182],[0.156,-0.188,-0.208,-0.169],[0.168,-0.175,-0.198,-0.152]],"Manager":[[0.056,-0.254,-0.26,-0.248],[0.108,-0.23,-0.238,-0.222],[0.156,-0.209,-0.22,-0.198],[0.2,-0.178,-0.191,-0.166],[0.241,-0.159,-0.174,-0.145],[0.279,-0.13,-0.145,-0.114],[0.313,-0.112,-0.128,-0.097],[0.345,-0.089,-0.106,-0.072],[0.375,-0.076,-0.093,-0.058]],"Self-Coord.":[[0.051,-0.207,-0.216,-0.198],[0.097,-0.219,-0.228,-0.21],[0.136,-0.216,-0.223,-0.208],[0.171,-0.221,-0.23,-0.212],[0.202,-0.209,-0.22,-0.199],[0.229,-0.197,-0.209,-0.186],[0.253,-0.172,-0.185,-0.158],[0.274,-0.162,-0.176,-0.148],[0.292,-0.133,-0.149,-0.117]],"Wealthseeking":[[0.021,-0.232,-0.239,-0.225],[0.04,-0.245,-0.252,-0.238],[0.059,-0.242,-0.249,-0.235],[0.076,-0.241,-0.247,-0.234],[0.093,-0.229,-0.237,-0.22],[0.109,-0.225,-0.234,-0.216],[0.125,-0.213,-0.223,-0.203],[0.139,-0.205,-0.217,-0.194],[0.153,-0.194,-0.207,-0.182]]}};
+    
+    /* ------------------------------------------------------------------
+       BibTeX
+    ------------------------------------------------------------------ */
+    const BIBTEX = `@misc{simhi2026seeingforesttreesemergent,
+      title={Seeing the Forest for the Trees: Emergent Agreement from Individual Conversations}, 
+      author={Adi Simhi and Yaniv Nikankin and Jonathan Herzig and Idan Szpektor and Yonatan Belinkov and Shay B. Cohen},
+      year={2026},
+      eprint={2610.29328},
+      archivePrefix={arXiv},
+      url={https://arxiv.org/abs/2610.29328}, 
+}`;
+    document.getElementById('bibtex-text').textContent = BIBTEX;
+    document.getElementById('bib-main').textContent = BIBTEX;
+
+    function openModal() { document.getElementById('bibtex-modal').classList.add('active'); }
+    function closeModal() { document.getElementById('bibtex-modal').classList.remove('active'); }
+    document.getElementById('bibtex-modal').addEventListener('click', e => { if (e.target.id === 'bibtex-modal') closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    document.getElementById('bibtex-text').addEventListener('click', function () {
+        const r = document.createRange(); r.selectNodeContents(this);
+        const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    });
+    function copyBib(btn) {
+        const done = () => { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500); };
+        try { navigator.clipboard.writeText(BIBTEX).then(done, done); } catch (e) { done(); }
+    }
+
+    /* ------------------------------------------------------------------
+       Helpers
+    ------------------------------------------------------------------ */
+    const NS = 'http://www.w3.org/2000/svg';
+    const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    const COL = { c1: css('--c1'), c2: css('--c2'), c3: css('--c3'), c4: css('--c4'),
+                  agree: css('--agree'), agreeBg: css('--agree-bg'),
+                  dis: css('--disagree'), disBg: css('--disagree-bg'),
+                  grid: css('--grid'), axis: css('--axis'),
+                  ink: '#1a1a1a', ink2: '#4a5568', muted: '#6b7280' };
+    const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function el(tag, attrs = {}, parent) {
+        const e = document.createElementNS(NS, tag);
+        for (const k in attrs) e.setAttribute(k, attrs[k]);
+        if (parent) parent.appendChild(e);
+        return e;
+    }
+    function txt(parent, x, y, s, attrs = {}) {
+        const t = el('text', Object.assign({ x, y, 'font-family': 'Outfit, sans-serif', 'font-size': 14, fill: COL.ink2 }, attrs), parent);
+        t.textContent = s;
+        return t;
+    }
+    function rng(seed) {   // mulberry32
+        return function () {
+            seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+            let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+            t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+            return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+    }
+    const SLOW = (() => { try { return Math.max(1, +new URLSearchParams(location.search).get('slow') || 1); } catch (e) { return 1; } })();
+    const sleep = ms => new Promise(r => setTimeout(r, REDUCED ? 0 : ms * SLOW));
+    const realSleep = sleep;
+    const show = e => requestAnimationFrame(() => requestAnimationFrame(() => e.classList.add('show')));
+    function drawPath(path) {
+        path.setAttribute('pathLength', 1);
+        path.style.strokeDasharray = 1;
+        path.style.strokeDashoffset = 1;
+        path.classList.add('draw');
+        requestAnimationFrame(() => requestAnimationFrame(() => path.style.strokeDashoffset = 0));
+    }
+    function linePath(pts) { return pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' '); }
+    function lerpColor(a, b, t) {
+        const pa = [1, 3, 5].map(i => parseInt(a.slice(i, i + 2), 16));
+        const pb = [1, 3, 5].map(i => parseInt(b.slice(i, i + 2), 16));
+        return '#' + pa.map((v, i) => Math.round(v + (pb[i] - v) * t).toString(16).padStart(2, '0')).join('');
+    }
+    const seq = v => lerpColor('#f3e8ff', '#581c87', Math.max(0, Math.min(1, v)));  // single-hue sequential (purple)
+
+    /* Tooltip: any element with data-tip */
+    const tip = document.getElementById('tip');
+    document.addEventListener('mousemove', e => {
+        const t = e.target.closest && e.target.closest('[data-tip]');
+        if (t) {
+            tip.innerHTML = t.getAttribute('data-tip');
+            tip.classList.add('on');
+            const w = tip.offsetWidth;
+            const x = Math.min(e.clientX + 14, window.innerWidth - w - 8);
+            tip.style.left = x + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+        } else tip.classList.remove('on');
+    });
+
+    /* Generic axes */
+    function axes(g, o) {
+        // o: {x0,x1,y0(top),y1(bottom), xTicks:[[val,label]], yTicks:[[val,label]], sx, sy, xLabel, yLabel}
+        o.yTicks.forEach(([v, l]) => {
+            const y = o.sy(v);
+            el('line', { x1: o.x0, x2: o.x1, y1: y, y2: y, stroke: COL.grid, 'stroke-width': 1 }, g);
+            txt(g, o.x0 - 8, y + 4, l, { 'text-anchor': 'end', 'font-size': 12, fill: COL.muted, 'font-family': 'JetBrains Mono, monospace' });
+        });
+        el('line', { x1: o.x0, x2: o.x1, y1: o.y1, y2: o.y1, stroke: COL.axis, 'stroke-width': 1.5 }, g);
+        o.xTicks.forEach(([v, l]) => {
+            const x = o.sx(v);
+            el('line', { x1: x, x2: x, y1: o.y1, y2: o.y1 + 5, stroke: COL.axis }, g);
+            txt(g, x, o.y1 + 20, l, { 'text-anchor': 'middle', 'font-size': 12, fill: COL.muted, 'font-family': 'JetBrains Mono, monospace' });
+        });
+        if (o.xLabel) txt(g, (o.x0 + o.x1) / 2, o.y1 + 42, o.xLabel, { 'text-anchor': 'middle', 'font-size': 14, fill: COL.ink2 });
+        if (o.yLabel) {
+            const cy = (o.y0 + o.y1) / 2, cx = o.x0 - (o.yOff || 48);
+            txt(g, cx, cy, o.yLabel, { 'text-anchor': 'middle', 'font-size': 14, fill: COL.ink2, transform: `rotate(-90 ${cx} ${cy})` });
+        }
+    }
+
+    /* ------------------------------------------------------------------
+       FIGURE 1 — animated
+    ------------------------------------------------------------------ */
+    const fig = document.getElementById('fig1');
+    let runId = 0;
+    let playing = false;
+
+    /* Paper tables used by the figure */
+    const DS = ['Beh-Disp', 'Global', 'Manager', 'Self-Coord.', 'Wealthseeking'];
+    // Same colors as Figure 4 of the paper
+    const DSCOL = { 'Beh-Disp': '#0072b2', 'Global': '#cc79a7', 'Manager': '#009e73', 'Self-Coord.': '#e69f00', 'Wealthseeking': '#56b4e9' };
+    const DSSHAPE = { 'Beh-Disp': 'circle', 'Global': 'circle', 'Manager': 'circle', 'Self-Coord.': 'circle', 'Wealthseeking': 'circle' };
+    // Axis limits and ticks exactly as in Figure 4 of the paper
+    const PAPER_AX = {
+        Ministral: { x: [0.3334, 0.8564], y: [-0.743, 0.8564], xt: [0.4, 0.5, 0.6, 0.7, 0.8], yt: [-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8], xd: 1, yd: 1 },
+        Qwen:      { x: [0.0896, 0.8342], y: [-0.2886, 0.2194], xt: [0.2, 0.4, 0.6, 0.8], yt: [-0.2, -0.1, 0, 0.1, 0.2], xd: 1, yd: 1 },
+        Gemma:     { x: [-0.0217, 0.909], y: [-0.2807, 0.1427], xt: [0, 0.2, 0.4, 0.6, 0.8], yt: [-0.2, -0.1, 0, 0.1], xd: 1, yd: 1 }
+    };
+    // Figure 2 line colors (matplotlib tab10, same order as the paper)
+    const TAB10 = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'];
+    // Table 5: fitted power-law parameters (alpha, beta, gamma)
+    const TABLE5 = {
+        Ministral: { 'Beh-Disp': [0.407, 0.273, 1.602], 'Global': [4.572, -0.643, 8.845], 'Manager': [1.487, -0.042, 4.644], 'Self-Coord.': [11.861, -0.609, 10.000], 'Wealthseeking': [6.967, -0.644, 10.000] },
+        Qwen:      { 'Beh-Disp': [0.754, -0.087, 5.907], 'Global': [0.809, -0.267, 2.882], 'Manager': [2.069, -0.226, 8.703], 'Self-Coord.': [1.197, -0.218, 3.981], 'Wealthseeking': [1.623, -0.251, 5.347] },
+        Gemma:     { 'Beh-Disp': [0.260, -0.100, 1.946], 'Global': [1.564, -0.258, 2.045], 'Manager': [0.590, -0.275, 1.313], 'Self-Coord.': [1.601, -0.230, 2.601], 'Wealthseeking': [1.082, -0.250, 1.947] }
+    };
+    // Table 2: NR² on held-out conversations
+    const TABLE2 = {
+        Ministral: { 'Beh-Disp': 0.55, 'Global': 0.54, 'Manager': 0.88, 'Self-Coord.': 0.75, 'Wealthseeking': 0.64 },
+        Qwen:      { 'Beh-Disp': 0.30, 'Global': 0.19, 'Manager': 0.67, 'Self-Coord.': 0.11, 'Wealthseeking': 0.87 },
+        Gemma:     { 'Beh-Disp': 0.92, 'Global': 0.35, 'Manager': 0.82, 'Self-Coord.': 0.79, 'Wealthseeking': 0.55 }
+    };
+    // Table 1: variance of internal agreement (across / within conversations)
+    const TABLE1 = {
+        Ministral: { 'Beh-Disp': ['0.97 ± 0.14', '0.71 ± 0.18'], 'Global': ['0.93 ± 0.12', '0.64 ± 0.21'], 'Manager': ['0.95 ± 0.07', '0.66 ± 0.18'], 'Self-Coord.': ['0.96 ± 0.09', '0.63 ± 0.21'], 'Wealthseeking': ['0.96 ± 0.05', '0.65 ± 0.17'] },
+        Qwen:      { 'Beh-Disp': ['0.96 ± 0.16', '0.60 ± 0.19'], 'Global': ['0.99 ± 0.08', '0.62 ± 0.19'], 'Manager': ['0.90 ± 0.07', '0.59 ± 0.19'], 'Self-Coord.': ['0.99 ± 0.04', '0.61 ± 0.18'], 'Wealthseeking': ['0.95 ± 0.11', '0.58 ± 0.20'] },
+        Gemma:     { 'Beh-Disp': ['0.94 ± 0.15', '0.54 ± 0.19'], 'Global': ['0.99 ± 0.27', '0.61 ± 0.18'], 'Manager': ['0.95 ± 0.29', '0.56 ± 0.20'], 'Self-Coord.': ['0.98 ± 0.25', '0.58 ± 0.18'], 'Wealthseeking': ['0.99 ± 0.23', '0.58 ± 0.20'] }
+    };
+
+    const SEL = { model: 'Gemma', ds: 'Beh-Disp' };
+
+    // Section titles (paper) and the conclusion shown when each step finishes
+    const TAKEAWAY = [
+        { sec: '§2 · Conversation setup', main: 'Two models start in disagreement and converge to agreement', color: '#0891b2' },
+        { sec: '§3 · Internal agreement varies widely in individual conversations', main: 'Individual conversations: high variance internally', color: '#9333ea' },
+        { sec: '§4 · Aggregation reveals behavioral agreement is Markovian', main: 'Aggregated: Reveals Markovian structure behaviorally of agreement', color: '#ea580c' },
+        { sec: '§5 · Aggregation reveals internal agreement structure', main: 'Aggregated: internal agreement follows behavioral Markov agreement via a power law', color: '#db2777' }
+    ];
+    function setTakeaway(i, on) {
+        const m = document.getElementById('tk-main');
+        m.textContent = TAKEAWAY[i].main;
+        m.style.setProperty('--tk', TAKEAWAY[i].color);
+        m.classList.remove('on');
+        if (on) requestAnimationFrame(() => requestAnimationFrame(() => m.classList.add('on')));
+    }
+    let currentStep = 0;
+
+    const EXPLAIN = [
+        () => `<strong style="color:#0e7490">(a) A single conversation.</strong> Two instances of a model are conditioned on opposing personas (a <em>Punisher</em> leaning toward A, a <em>Reformer</em> leaning toward B). They discuss the scenario turn by turn, until one changes its opinion and they converge to agreement.
+         <span class="note">Example from Figure 1a of the paper.</span>`,
+        () => `<strong style="color:#7e22ce">(b) Internal agreement in individual conversations has high variance.</strong> Each line is one of ten randomly sampled conversations of <b>${SEL.model}</b> on <b>${SEL.ds}</b>, showing the internal agreement z (the projection of the activation on the agreement direction) across turns. It swings back and forth between turns and differs between conversations.
+         <span class="note">Data: Figure 2 of the paper (values read from the vector figure).</span>`,
+        () => `<strong style="color:#c2410c">(c) Aggregated behavior is Markovian.</strong> Pooling all conversations of <b>${SEL.model}</b> on <b>${SEL.ds}</b> gives the empirical agreement probability at each turn (black). The first-order Markov prediction p(t) = π<sub>agree</sub>(1 − λ<sub>2</sub><sup>t</sup>) (orange, dashed) closely follows it; the second-order Markov model and the unigram (no history) baseline are shown for comparison.
+         <span class="note">Data: Figure 3 of the paper (values read from the vector figure). Averaged over all models and datasets, MAE is 7.06% (first-order), 6.26% (second-order) and 12.22% (unigram).</span>`,
+        () => `<strong style="color:#be185d">(d) Aggregated internals follow a power law.</strong> For <b>${SEL.model}</b>, each point is the aggregated internal agreement z̄(t) of one turn (held-out conversations), plotted against the behavioral Markov agreement p(t) of that turn, so points move right as the conversation progresses. The curves are the fitted power laws z̄(t) ≈ α·p(t)<sup>γ</sup> + β.
+         <span class="note">Data: Figure 4 (points) and Table 5 (α, β, γ) of the paper. NR² values in the legend are from Table 2.</span>`
+    ];
+
+    function setStep(i) {
+        document.querySelectorAll('#fig1-controls .control-btn[data-step]').forEach(b =>
+            b.classList.toggle('active', +b.dataset.step === i));
+        const ft = document.getElementById('fig1-text');
+        if (ft) ft.innerHTML = EXPLAIN[i]();
+        currentStep = i;
+    }
+
+    async function runScene(i, chained = false) {
+        const id = ++runId;
+        if (!chained) { playing = false; updatePlayBtn(); }
+        setStep(i);
+        setTakeaway(i, true);
+        fig.innerHTML = '';
+        await SCENES[i](id);
+        return id === runId;
+    }
+
+    function updatePlayBtn() {
+        document.getElementById('play-all').textContent = playing ? '■ Stop' : '▶ Play all';
+    }
+
+    async function playAll() {
+        if (playing) { playing = false; runId++; updatePlayBtn(); return; }
+        playing = true; updatePlayBtn();
+        for (let i = 0; i < 4; i++) {
+            const ok = await runScene(i, true);
+            if (!ok || !playing) return;
+            await sleep(2600);
+            if (!playing) return;
+        }
+        playing = false; updatePlayBtn();
+    }
+
+    /* ---- Scene (a): conversation ---- */
+    function robot(g, cx, cy, color) {
+        el('line', { x1: cx, y1: cy - 26, x2: cx, y2: cy - 18, stroke: color, 'stroke-width': 3 }, g);
+        el('circle', { cx, cy: cy - 28, r: 4, fill: color }, g);
+        el('rect', { x: cx - 22, y: cy - 18, width: 44, height: 36, rx: 9, fill: color }, g);
+        el('circle', { cx: cx - 9, cy: cy - 3, r: 5, fill: '#fff' }, g);
+        el('circle', { cx: cx + 9, cy: cy - 3, r: 5, fill: '#fff' }, g);
+        el('rect', { x: cx - 8, y: cy + 8, width: 16, height: 3, rx: 1.5, fill: '#fff' }, g);
+    }
+
+    async function sceneA(id) {
+        const g = el('g', {}, fig);
+        // scenario box
+        const sc = el('g', { class: 'fade' }, g);
+        el('rect', { x: 18, y: 70, width: 240, height: 290, rx: 14, fill: '#f8f9fa', stroke: COL.grid }, sc);
+        txt(sc, 38, 108, 'Conversation scenario', { 'font-weight': 700, fill: COL.ink, 'font-size': 16 });
+        ['What should be the main', 'goal of the criminal', 'justice system?'].forEach((s, k) => txt(sc, 38, 140 + k * 22, s, { 'font-size': 15 }));
+        txt(sc, 38, 238, 'Option A:', { 'font-weight': 700, fill: COL.ink, 'font-size': 15 });
+        txt(sc, 112, 238, 'Punishment', { 'font-size': 15 });
+        txt(sc, 38, 264, 'Option B:', { 'font-weight': 700, fill: COL.ink, 'font-size': 15 });
+        txt(sc, 112, 264, 'Rehabilitation', { 'font-size': 15 });
+        txt(sc, 38, 330, 'Binary decisions are stripped', { 'font-size': 12, fill: COL.muted });
+        txt(sc, 38, 346, 'before being passed on.', { 'font-size': 12, fill: COL.muted });
+        show(sc);
+        await sleep(500); if (id !== runId) return;
+
+        // personas
+        const P = [
+            { y: 150, color: COL.c2, name: 'Punisher', lean: 'leans toward A' },
+            { y: 315, color: COL.c1, name: 'Reformer', lean: 'leans toward B' }
+        ];
+        P.forEach(p => {
+            const pg = el('g', { class: 'fade' }, g);
+            robot(pg, 325, p.y - 10, p.color);
+            txt(pg, 325, p.y + 34, p.name, { 'text-anchor': 'middle', 'font-weight': 700, fill: COL.ink, 'font-size': 14 });
+            txt(pg, 325, p.y + 52, p.lean, { 'text-anchor': 'middle', 'font-size': 12, fill: COL.muted });
+            show(pg);
+        });
+        await sleep(500); if (id !== runId) return;
+
+        // timeline
+        const tl = el('g', { class: 'fade' }, g);
+        el('line', { x1: 400, x2: 975, y1: 410, y2: 410, stroke: COL.axis, 'stroke-width': 1.5 }, tl);
+        el('path', { d: 'M975 410 l-8 -5 v10 z', fill: COL.axis }, tl);
+        txt(tl, 975, 452, 'Turn in conversation', { 'text-anchor': 'end', 'font-size': 12, fill: COL.muted });
+        show(tl);
+
+        const turns = [
+            ['My opinion…', 'A', 'Since…', 'B', false],
+            ['I think…', 'A', 'Maybe…', 'B', false],
+            ['Well,…', 'A', 'I think…', 'B', false],
+            ['I concur,…', 'B', 'Still,…', 'B', true]
+        ];
+        for (let k = 0; k < turns.length; k++) {
+            const [t1, d1, t2, d2, agree] = turns[k];
+            const cx = 470 + k * 135;
+            const tick = el('g', { class: 'fade' }, g);
+            el('line', { x1: cx, x2: cx, y1: 404, y2: 416, stroke: COL.axis, 'stroke-width': 1.5 }, tick);
+            txt(tick, cx, 435, 't=' + (k + 1), { 'text-anchor': 'middle', 'font-size': 12, fill: COL.muted, 'font-family': 'JetBrains Mono, monospace' });
+            show(tick);
+
+            [[t1, d1, 95, COL.c2], [t2, d2, 270, COL.c1]].forEach(([s, d, y, c], r) => {
+                const b = el('g', { class: 'fade' }, g);
+                el('rect', { x: cx - 58, y, width: 116, height: 82, rx: 14, fill: '#fff', stroke: c, 'stroke-width': 2.5 }, b);
+                txt(b, cx, y + 30, s, { 'text-anchor': 'middle', 'font-size': 14, fill: COL.ink2 });
+                txt(b, cx, y + 64, d, { 'text-anchor': 'middle', 'font-size': 24, 'font-weight': 700, fill: COL.ink, 'font-family': 'JetBrains Mono, monospace' });
+                setTimeout(() => show(b), r * 260 * SLOW);
+            });
+            await sleep(600); if (id !== runId) return;
+
+            // state chip
+            const chip = el('g', { class: 'fade' }, g);
+            el('rect', { x: cx - 44, y: 207, width: 88, height: 26, rx: 13, fill: agree ? COL.agreeBg : COL.disBg, stroke: agree ? COL.agree : COL.dis, 'stroke-width': 1.5 }, chip);
+            txt(chip, cx, 225, agree ? 'Agree' : 'Disagree', { 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 600, fill: agree ? COL.agree : COL.dis });
+            show(chip);
+
+            if (agree) {
+                const note = el('g', { class: 'fade' }, g);
+                el('rect', { x: cx - 58, y: 58, width: 116, height: 24, rx: 12, fill: '#fff7ed', stroke: COL.c4, 'stroke-width': 1.5 }, note);
+                txt(note, cx, 75, 'opinion change', { 'text-anchor': 'middle', 'font-size': 12.5, 'font-weight': 600, fill: '#c2410c' });
+                show(note);
+            }
+            await sleep(500); if (id !== runId) return;
+        }
+    }
+
+    /* ---- shared plotting helpers ---- */
+    function niceTicks(lo, hi, n) {
+        const span = (hi - lo) || 1, raw = span / n;
+        const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+        const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw * 0.999);
+        const start = Math.floor(lo / step + 1e-9) * step, end = Math.ceil(hi / step - 1e-9) * step;
+        const t = [];
+        for (let v = start; v <= end + step * 1e-6; v += step) t.push(+v.toFixed(10));
+        t.step = step;
+        return t;
+    }
+    function fmtTick(v, step) {
+        let d = Math.max(0, Math.ceil(-Math.log10(step) - 1e-9));
+        if (Math.abs(step * Math.pow(10, d) - Math.round(step * Math.pow(10, d))) > 1e-6) d++;
+        const s = Math.abs(v) < 1e-12 ? (0).toFixed(d) : v.toFixed(d);
+        return s.replace('-', '−');
+    }
+    function marker(g, shape, x, y, r, color, attrs = {}) {
+        let e;
+        if (shape === 'circle') e = el('circle', { cx: x, cy: y, r }, g);
+        else if (shape === 'square') e = el('rect', { x: x - r * 0.88, y: y - r * 0.88, width: r * 1.76, height: r * 1.76, rx: 1 }, g);
+        else if (shape === 'triangle') e = el('path', { d: `M${x} ${y - r * 1.2}L${x + r * 1.05} ${y + r * 0.75}L${x - r * 1.05} ${y + r * 0.75}Z` }, g);
+        else if (shape === 'diamond') e = el('path', { d: `M${x} ${y - r * 1.25}L${x + r * 1.05} ${y}L${x} ${y + r * 1.25}L${x - r * 1.05} ${y}Z` }, g);
+        else e = el('path', { d: `M${x} ${y + r * 1.2}L${x + r * 1.05} ${y - r * 0.75}L${x - r * 1.05} ${y - r * 0.75}Z` }, g);
+        e.setAttribute('fill', color); e.setAttribute('stroke', '#fff'); e.setAttribute('stroke-width', 1.5);
+        for (const k in attrs) e.setAttribute(k, attrs[k]);
+        return e;
+    }
+    function markerSVG(shape, color) {
+        const s = document.createElementNS(NS, 'svg');
+        s.setAttribute('width', 16); s.setAttribute('height', 16); s.setAttribute('viewBox', '0 0 16 16');
+        s.style.verticalAlign = '-3px'; s.style.marginRight = '6px';
+        marker(s, shape, 8, 8, 5.5, color);
+        return s;
+    }
+
+    /* Draws Figure-4-style power-law panel for one model.  o: {id, step, counter, xLabel, yLabel, title, r, yOff} */
+    async function drawPowerLaw(g, model, B, o = {}) {
+        const alive = () => o.id == null || o.id === runId;
+        const data = FIG4[model];
+        const PA = PAPER_AX[model];
+        const [X0, X1] = PA.x, [Y0, Y1] = PA.y;
+        const fmt = (v, d) => (Math.abs(v) < 1e-12 ? 0 : v).toFixed(d).replace('-', '−');
+        const sx = p => B.x0 + (p - X0) / (X1 - X0) * (B.x1 - B.x0);
+        const sy = z => B.y1 - (z - Y0) / (Y1 - Y0) * (B.y1 - B.y0);
+        const ax = el('g', { class: 'fade' }, g);
+        axes(ax, { x0: B.x0, x1: B.x1, y0: B.y0, y1: B.y1, sx, sy,
+            xTicks: PA.xt.map(v => [v, fmt(v, PA.xd)]), yTicks: PA.yt.map(v => [v, fmt(v, PA.yd)]),
+            xLabel: o.xLabel, yLabel: o.yLabel, yOff: o.yOff || 58 });
+        // full frame, like the paper's matplotlib axes
+        el('rect', { x: B.x0, y: B.y0, width: B.x1 - B.x0, height: B.y1 - B.y0, fill: 'none', stroke: COL.axis, 'stroke-width': 1 }, ax);
+        if (o.title) txt(ax, (B.x0 + B.x1) / 2, B.y0 - 14, o.title, { 'text-anchor': 'middle', 'font-size': 16, 'font-weight': 700, fill: COL.ink });
+        show(ax);
+        const curveL = el('g', {}, g), ptsL = el('g', {}, g);
+        let counter = null;
+        if (o.counter) counter = txt(g, B.x1, B.y0 - 8, '', { 'text-anchor': 'end', 'font-size': 20, 'font-weight': 700, fill: COL.ink, 'font-family': 'JetBrains Mono, monospace' });
+        await sleep(300); if (!alive()) return;
+
+        for (let t = 0; t < 9; t++) {
+            if (counter) counter.textContent = 't = ' + (t + 1);
+            DS.forEach(d => {
+                const [p, z, lo, hi] = data[d][t];
+                const c = el('g', { class: 'fade' }, ptsL);
+                const cw = (o.r || 5.5) * 0.8;
+                el('line', { x1: sx(p), x2: sx(p), y1: sy(lo), y2: sy(hi), stroke: DSCOL[d], 'stroke-width': 1.5 }, c);
+                el('line', { x1: sx(p) - cw, x2: sx(p) + cw, y1: sy(lo), y2: sy(lo), stroke: DSCOL[d], 'stroke-width': 1.5 }, c);
+                el('line', { x1: sx(p) - cw, x2: sx(p) + cw, y1: sy(hi), y2: sy(hi), stroke: DSCOL[d], 'stroke-width': 1.5 }, c);
+                marker(c, DSSHAPE[d], sx(p), sy(z), o.r || 5.5, DSCOL[d]);
+                el('circle', { cx: sx(p), cy: sy(z), r: 11, fill: 'transparent',
+                    'data-tip': `${model} · ${d} · turn ${t + 1}<br>p(t) = ${p.toFixed(3)}<br>z̄(t) = ${z.toFixed(3)}` }, c);
+                show(c);
+            });
+            await sleep(o.step || 380); if (!alive()) return;
+        }
+        if (counter) counter.textContent = '';
+        for (const d of DS) {
+            const [a, b, gm] = TABLE5[model][d];
+            const lo = data[d][0][0], hi = data[d][8][0], pts = [];
+            for (let i = 0; i <= 60; i++) { const p = lo + (hi - lo) * i / 60; pts.push([sx(p), sy(a * Math.pow(p, gm) + b)]); }
+            const path = el('path', { d: linePath(pts), fill: 'none', stroke: DSCOL[d], 'stroke-width': 2.5 }, curveL);
+            drawPath(path);
+            el('path', { d: linePath(pts), fill: 'none', stroke: 'transparent', 'stroke-width': 12, 'pointer-events': 'stroke',
+                'data-tip': `${model} · ${d} power-law fit<br>α = ${a.toFixed(3)}, β = ${b.toFixed(3)}, γ = ${gm.toFixed(3)}<br>NR² = ${TABLE2[model][d].toFixed(2)}` }, curveL);
+            await sleep((o.step || 380) * 0.8); if (!alive()) return;
+        }
+    }
+
+    /* ---- Scene (b): Figure 2 data, all ten conversations drawn together ---- */
+    async function sceneB(id) {
+        const g = el('g', {}, fig);
+        const L = FIG2[SEL.model][SEL.ds];
+        const all = L.flat();
+        const yt = niceTicks(Math.min(...all), Math.max(...all), 5);
+        const Y0 = yt[0], Y1 = yt[yt.length - 1];
+        const x0 = 110, x1 = 900, y0 = 50, y1 = 370;
+        const sx = t => x0 + (t - 1) / 8 * (x1 - x0);
+        const sy = z => y1 - (z - Y0) / (Y1 - Y0) * (y1 - y0);
+        const ax = el('g', { class: 'fade' }, g);
+        axes(ax, { x0, x1, y0, y1, sx, sy,
+            xTicks: [1, 2, 3, 4, 5, 6, 7, 8, 9].map(t => [t, t]),
+            yTicks: yt.map(v => [v, fmtTick(v, yt.step)]),
+            xLabel: 'Turn in conversation', yLabel: 'Internal agreement z', yOff: 60 });
+        show(ax);
+        await sleep(400); if (id !== runId) return;
+
+        // reveal all lines together, turn by turn, with a growing clip rectangle
+        const cid = 'clipB' + id;
+        const cp = el('clipPath', { id: cid }, el('defs', {}, g));
+        const cr = el('rect', { x: x0 - 10, y: 0, width: 0, height: 460 }, cp);
+        const lines = el('g', { 'clip-path': `url(#${cid})` }, g);
+        L.forEach((zs, k) => {
+            const pts = zs.map((z, i) => [sx(i + 1), sy(z)]);
+            el('path', { d: linePath(pts), fill: 'none', stroke: TAB10[k], 'stroke-width': 2.2, 'stroke-linejoin': 'round' }, lines);
+            pts.forEach(p => el('circle', { cx: p[0], cy: p[1], r: 3.4, fill: TAB10[k], stroke: '#fff', 'stroke-width': 1 }, lines));
+        });
+        const W = (x1 - x0) + 20, dur = REDUCED ? 0 : 3600 * SLOW;
+        await new Promise(res => {
+            const t0 = performance.now();
+            const tick = () => {
+                const now = performance.now();
+                if (id !== runId) return res();
+                const f = dur ? Math.min(1, (now - t0) / dur) : 1;
+                cr.setAttribute('width', W * f);
+                if (f < 1) requestAnimationFrame(tick); else res();
+            };
+            requestAnimationFrame(tick);
+        });
+        if (id !== runId) return;
+        const hit = el('g', {}, g);
+        L.forEach((zs, k) => zs.forEach((z, i) => el('circle', { cx: sx(i + 1), cy: sy(z), r: 8, fill: 'transparent',
+            'data-tip': `Conversation ${k + 1} · turn ${i + 1}<br>z = ${z.toFixed(2)}` }, hit)));
+    }
+
+    /* ---- Scene (c): Figure 3 data ---- */
+    async function sceneC(id) {
+        // Static panel: everything appears at once (no step-by-step drawing)
+        const drawPath = () => {};
+        const sleep = () => Promise.resolve();
+        const g = el('g', {}, fig);
+        const D = FIG3[SEL.model][SEL.ds];
+        const x0 = 110, x1 = 760, y0 = 50, y1 = 370;
+        const sx = t => x0 + t / 9 * (x1 - x0);
+        const sy = p => y1 - p / 100 * (y1 - y0);
+        const ax = el('g', { class: 'fade' }, g);
+        axes(ax, { x0, x1, y0, y1, sx, sy,
+            xTicks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(t => [t, t]),
+            yTicks: [[0, '0%'], [25, '25%'], [50, '50%'], [75, '75%'], [100, '100%']],
+            xLabel: 'Turn in conversation', yLabel: 'Agreement', yOff: 58 });
+        show(ax);
+
+        // legend
+        const leg = el('g', { class: 'fade' }, g);
+        const lx = 790;
+        const items = [
+            ['emp', 'Empirical ground truth'], ['m1', 'Markov (first order)'], ['m2', 'Markov (second order)'], ['uni', 'Unigram (no history)']
+        ];
+        items.forEach(([k, name], i) => {
+            const y = 80 + i * 30;
+            if (k === 'emp') { el('line', { x1: lx, x2: lx + 24, y1: y, y2: y, stroke: COL.ink, 'stroke-width': 2 }, leg); el('circle', { cx: lx + 12, cy: y, r: 4, fill: COL.ink }, leg); }
+            if (k === 'm1') el('line', { x1: lx, x2: lx + 24, y1: y, y2: y, stroke: '#d55e00', 'stroke-width': 3, 'stroke-dasharray': '8 4' }, leg);
+            if (k === 'm2') el('line', { x1: lx, x2: lx + 24, y1: y, y2: y, stroke: '#0072b2', 'stroke-width': 2.5, 'stroke-dasharray': '7 3 2 3' }, leg);
+            if (k === 'uni') el('line', { x1: lx, x2: lx + 24, y1: y, y2: y, stroke: '#009e73', 'stroke-width': 2.5, 'stroke-dasharray': '2 4' }, leg);
+            txt(leg, lx + 32, y + 4, name, { 'font-size': 13 });
+        });
+        show(leg);
+        await sleep(400); if (id !== runId) return;
+
+        // empirical, turn by turn
+        const eL = el('g', {}, g);
+        for (let t = 0; t < 10; t++) {
+            const c = el('g', { class: 'fade' }, eL);
+            if (t > 0) el('line', { x1: sx(t - 1), y1: sy(D.emp[t - 1]), x2: sx(t), y2: sy(D.emp[t]), stroke: COL.ink, 'stroke-width': 1.8 }, c);
+            el('circle', { cx: sx(t), cy: sy(D.emp[t]), r: 4.5, fill: COL.ink, stroke: '#fff', 'stroke-width': 1.5 }, c);
+            el('circle', { cx: sx(t), cy: sy(D.emp[t]), r: 12, fill: 'transparent',
+                'data-tip': `Turn ${t}<br>Empirical: ${D.emp[t].toFixed(1)}%<br>Markov (1st): ${D.m1[t].toFixed(1)}%` + (t >= 2 ? `<br>Markov (2nd): ${D.m2[t - 2].toFixed(1)}%` : '') + `<br>Unigram: ${D.uni.toFixed(1)}%` }, c);
+            show(c);
+            await sleep(260); if (id !== runId) return;
+        }
+        await sleep(300); if (id !== runId) return;
+        const under = el('g', {}, g); g.insertBefore(under, eL);
+        const m1 = el('path', { d: linePath(D.m1.map((p, t) => [sx(t), sy(p)])), fill: 'none', stroke: '#d55e00', 'stroke-width': 3, 'stroke-dasharray': '8 4' }, under);
+        drawPath(m1);
+        await sleep(1200); if (id !== runId) return;
+        const m2 = el('path', { d: linePath(D.m2.map((p, i) => [sx(i + 2), sy(p)])), fill: 'none', stroke: '#0072b2', 'stroke-width': 2.5, 'stroke-dasharray': '7 3 2 3' }, under);
+        const m2g = el('g', { class: 'fade' }, under); m2g.appendChild(m2); show(m2g);
+        await sleep(500); if (id !== runId) return;
+        const ug = el('g', { class: 'fade' }, under);
+        el('line', { x1: x0, x2: x1, y1: sy(D.uni), y2: sy(D.uni), stroke: '#009e73', 'stroke-width': 2.5, 'stroke-dasharray': '2 4' }, ug);
+        show(ug);
+        await realSleep(2500);   // give readers time on the static panel
+    }
+
+    /* ---- Scene (d): Figure 4 data + Table 5 curves ---- */
+    async function sceneD(id) {
+        const g = el('g', {}, fig);
+        const leg = el('g', { class: 'fade' }, g);
+        txt(leg, 800, 70, SEL.model, { 'font-size': 15, 'font-weight': 700, fill: COL.ink });
+        txt(leg, 960, 70, 'NR²', { 'font-size': 12, 'text-anchor': 'end', fill: COL.muted });
+        DS.forEach((d, i) => {
+            const y = 100 + i * 30;
+            marker(leg, DSSHAPE[d], 808, y, 6, DSCOL[d]);
+            txt(leg, 824, y + 5, d, { 'font-size': 13.5 });
+            txt(leg, 960, y + 5, TABLE2[SEL.model][d].toFixed(2), { 'font-size': 13, 'text-anchor': 'end', 'font-family': 'JetBrains Mono, monospace', fill: COL.ink2 });
+        });
+        el('line', { x1: 800, x2: 822, y1: 260, y2: 260, stroke: COL.ink2, 'stroke-width': 2.5 }, leg);
+        txt(leg, 830, 265, 'power-law fit', { 'font-size': 13 });
+        show(leg);
+        await drawPowerLaw(g, SEL.model, { x0: 120, x1: 750, y0: 50, y1: 370 },
+            { id, counter: true, xLabel: 'Behavioral Markov agreement p(t)', yLabel: 'Aggregated internal agreement z̄(t)', yOff: 70, r: 6.5, step: 420 });
+        if (id !== runId) return;
+        await sleep(400); if (id !== runId) return;
+        const eq = el('g', { class: 'fade' }, g);
+        el('rect', { x: 790, y: 300, width: 190, height: 44, rx: 10, fill: '#fdf2f8', stroke: COL.c3 }, eq);
+        const eqT = txt(eq, 885, 328, 'z̄ ≈ α·p', { 'text-anchor': 'middle', 'font-size': 16, 'font-weight': 700, fill: COL.ink, 'font-family': 'JetBrains Mono, monospace' });
+        const sup = el('tspan', { dy: -7, 'font-size': 12 }, eqT); sup.textContent = 'γ';
+        const rest = el('tspan', { dy: 7 }, eqT); rest.textContent = ' + β';
+        show(eq);
+    }
+
+    const SCENES = [sceneA, sceneB, sceneC, sceneD];
+
+    document.querySelectorAll('#fig1-controls .control-btn[data-step]').forEach(b =>
+        b.addEventListener('click', () => { fig1Started = true; runScene(+b.dataset.step); }));
+    document.getElementById('sel-model').addEventListener('change', e => { SEL.model = e.target.value; fig1Started = true; runScene(currentStep === 0 ? 1 : currentStep); });
+    document.getElementById('sel-ds').addEventListener('change', e => { SEL.ds = e.target.value; fig1Started = true; if (currentStep !== 3) runScene(currentStep === 0 ? 1 : currentStep); });
+    document.getElementById('play-all').addEventListener('click', () => { fig1Started = true; playAll(); });
+
+    // Autoplay when the figure first scrolls into view
+    let fig1Started = false;
+    new IntersectionObserver((ents, obs) => {
+        ents.forEach(e => { if (e.isIntersecting && !fig1Started) { fig1Started = true; obs.disconnect(); playAll(); } });
+    }, { threshold: 0.35 }).observe(fig);
+    setStep(0);
+    setTakeaway(0, true);
+
+    /* ------------------------------------------------------------------
+       Results: MAE bars (paper §4)
+    ------------------------------------------------------------------ */
+    (function mae() {
+        const svg = document.getElementById('mae');
+        const data = [
+            ['Unigram (no history)', 12.22, '#9ca3af'],
+            ['Markov, first order', 7.06, COL.c4],
+            ['Markov, second order', 6.26, '#9ca3af']
+        ];
+        const x0 = 175, x1 = 470, max = 14;
+        const sx = v => x0 + v / max * (x1 - x0);
+        [0, 5, 10].forEach(v => {
+            el('line', { x1: sx(v), x2: sx(v), y1: 15, y2: 168, stroke: COL.grid }, svg);
+            txt(svg, sx(v), 186, v + '%', { 'text-anchor': 'middle', 'font-size': 11, fill: COL.muted, 'font-family': 'JetBrains Mono, monospace' });
+        });
+        const bars = [];
+        data.forEach(([name, v, c], i) => {
+            const y = 25 + i * 50;
+            txt(svg, x0 - 10, y + 20, name, { 'text-anchor': 'end', 'font-size': 13, fill: COL.ink2, 'font-weight': i === 1 ? 700 : 400 });
+            const r = el('rect', { x: x0, y, width: 0, height: 28, rx: 4, fill: c, style: 'transition: width 1s ease', 'data-tip': `${name}: MAE ${v.toFixed(2)}%` }, svg);
+            const lab = txt(svg, x0 + 6, y + 19, v.toFixed(2) + '%', { 'font-size': 13, 'font-weight': 600, fill: COL.ink, 'font-family': 'JetBrains Mono, monospace', class: 'fade' });
+            bars.push([r, lab, v]);
+        });
+        el('line', { x1: x0, x2: x0, y1: 15, y2: 168, stroke: COL.axis, 'stroke-width': 1.5 }, svg);
+        onVisible(svg, () => bars.forEach(([r, lab, v], i) => setTimeout(() => {
+            r.setAttribute('width', sx(v) - x0);
+            lab.setAttribute('x', sx(v) + 8);
+            show(lab);
+        }, i * 200)));
+    })();
+
+    /* ------------------------------------------------------------------
+       Results: lag heatmap (Figure 6)
+    ------------------------------------------------------------------ */
+    (function lag() {
+        const svg = document.getElementById('lag');
+        const models = ['Ministral', 'Qwen', 'Gemma'];
+        const lags = ['−1', '0', '+1', '+2', '+3'];
+        const V = [[0.82, 0.71, 0.68, 0.52, 0.44], [0.89, 0.89, 0.82, 0.73, 0.62], [0.99, 0.89, 0.83, 0.59, 0.46]];
+        const x0 = 95, cw = 78, ch = 44, y0 = 12, gap = 2;
+        const cells = [];
+        models.forEach((m, r) => {
+            txt(svg, x0 - 10, y0 + r * (ch + gap) + ch / 2 + 5, m, { 'text-anchor': 'end', 'font-size': 13, fill: COL.ink2, 'font-weight': 600 });
+            lags.forEach((l, c) => {
+                const x = x0 + c * (cw + gap), y = y0 + r * (ch + gap);
+                const rect = el('rect', { x, y, width: cw, height: ch, rx: 4, fill: '#f8f9fa', style: 'transition: fill .6s ease',
+                    'data-tip': `${m}, lag ℓ = ${l}<br>Δ<sub>ℓ</sub> = ${V[r][c].toFixed(2)}` }, svg);
+                const t = txt(svg, x + cw / 2, y + ch / 2 + 5, V[r][c].toFixed(2), { 'text-anchor': 'middle', 'font-size': 14, 'font-weight': 600, 'font-family': 'JetBrains Mono, monospace', fill: V[r][c] > 0.6 ? '#fff' : COL.ink, class: 'fade', 'pointer-events': 'none' });
+                cells.push([rect, t, V[r][c], c]);
+            });
+        });
+        lags.forEach((l, c) => txt(svg, x0 + c * (cw + gap) + cw / 2, y0 + 3 * (ch + gap) + 16, l, { 'text-anchor': 'middle', 'font-size': 12, fill: COL.muted, 'font-family': 'JetBrains Mono, monospace' }));
+        txt(svg, x0 + 2.5 * (cw + gap), y0 + 3 * (ch + gap) + 38, 'Lag ℓ (turns relative to opinion change)', { 'text-anchor': 'middle', 'font-size': 13, fill: COL.ink2 });
+        // color scale
+        const ly = 210;
+        for (let i = 0; i < 40; i++) el('rect', { x: 200 + i * 4, y: ly - 8, width: 4, height: 9, fill: seq(i / 39) }, svg);
+        txt(svg, 194, ly, '0', { 'text-anchor': 'end', 'font-size': 11, fill: COL.muted });
+        txt(svg, 366, ly, '1', { 'font-size': 11, fill: COL.muted });
+        txt(svg, 380, ly, '(more separated)', { 'font-size': 11, fill: COL.muted });
+        onVisible(svg, () => cells.forEach(([rect, t, v, c]) => setTimeout(() => { rect.setAttribute('fill', seq(v)); show(t); }, c * 220)));
+    })();
+
+    /* ------------------------------------------------------------------
+       Results: power-law small multiples (Figure 4 + Table 5)
+    ------------------------------------------------------------------ */
+    (function powerlawResults() {
+        const svg = document.getElementById('powerlaw');
+        const models = ['Ministral', 'Qwen', 'Gemma'];
+        const leg = document.getElementById('pl-legend');
+        DS.forEach(d => {
+            const s = document.createElement('span');
+            s.appendChild(markerSVG(DSSHAPE[d], DSCOL[d]));
+            s.appendChild(document.createTextNode(d));
+            leg.appendChild(s);
+        });
+        const fit = document.createElement('span');
+        fit.innerHTML = '<span class="sw" style="height:3px;width:20px;background:#4a5568;vertical-align:4px"></span>power-law fit';
+        leg.appendChild(fit);
+        onVisible(svg, () => {
+            models.forEach((m, i) => {
+                const x0 = 95 + i * 350;
+                const g = el('g', {}, svg);
+                drawPowerLaw(g, m, { x0, x1: x0 + 270, y0: 45, y1: 320 },
+                    { title: m, yLabel: i === 0 ? 'Aggregated internal agreement z̄(t)' : null, xLabel: i === 1 ? 'Behavioral Markov agreement p(t)' : null,
+                      yOff: 58, r: 4.5, step: 160, xn: 4, yn: 6 });
+            });
+        });
+    })();
+
+    /* ------------------------------------------------------------------
+       Scroll helpers
+    ------------------------------------------------------------------ */
+    function onVisible(node, fn) {
+        const io = new IntersectionObserver((ents, obs) => {
+            ents.forEach(e => { if (e.isIntersecting) { obs.disconnect(); fn(); } });
+        }, { threshold: 0.3 });
+        io.observe(node);
+    }
+    const revealIO = new IntersectionObserver(ents => ents.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); revealIO.unobserve(e.target); }
+    }), { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(n => revealIO.observe(n));
+    </script>
+</body>
+</html>
